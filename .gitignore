@@ -1,0 +1,20 @@
+# Build outputs
+*.dll
+*.exe
+obj/
+bin/
+
+# Backup files
+*.bak
+*.backup
+
+# User-specific files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vs/
+*.sln
+*.userosscache
+
+# Keep only the source code, not the compiled output
