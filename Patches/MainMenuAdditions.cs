@@ -520,7 +520,7 @@ namespace CloverAddictivePatches.Patches
                 backIndex, // cancelOptionIndex
                 ScreenMenuScript.Positioning.center,
                 5f,    // extraOptionsSpacing
-                "Mod Options",
+                $"Mod Options (v{Plugin.Version})",
                 options,
                 events
             );
