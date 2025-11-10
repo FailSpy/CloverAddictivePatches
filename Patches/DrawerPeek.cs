@@ -2,7 +2,6 @@ using BepInEx;
 using HarmonyLib;
 using Panik;
 using UnityEngine;
-using System;
 using System.Reflection;
 
 namespace CloverAddictivePatches.Patches
@@ -381,41 +380,6 @@ namespace CloverAddictivePatches.Patches
             }
 
             return true;
-        }
-
-        [HarmonyPatch(typeof(ScreenMenuScript), "Open")]
-        [HarmonyPrefix]
-        static void Open_Prefix(ref string[] options, ref ScreenMenuScript.OptionEvent[] optionEvents, string title)
-        {
-            if (title != "Pick an Option" || options == null || options.Length != 2)
-                return;
-
-            pluginInstance.ModLogger.LogInfo($"Intercepted drawer menu with {options.Length} options");
-
-            var newOptions = new string[options.Length + 1];
-            var newEvents = new ScreenMenuScript.OptionEvent[options.Length + 1];
-
-            newOptions[0] = options[0];
-            newOptions[1] = "Hello, World!";
-            newOptions[2] = options[1];
-
-            newEvents[0] = optionEvents[0];
-            newEvents[1] = HelloWorldCallback;
-            newEvents[2] = optionEvents[1];
-
-            options = newOptions;
-            optionEvents = newEvents;
-
-            pluginInstance.ModLogger.LogInfo($"Modified drawer menu to have {newOptions.Length} options");
-        }
-
-        private static void HelloWorldCallback()
-        {
-            pluginInstance.ModLogger.LogInfo("Hello, World! button clicked!");
-
-            var dialogueType = Type.GetType("DialogueScript, Assembly-CSharp");
-            var setDialogueMethod = dialogueType?.GetMethod("SetDialogue", new Type[] { typeof(bool), typeof(string) });
-            setDialogueMethod?.Invoke(null, new object[] { false, "Hello, World! This is a custom drawer menu option!" });
         }
     }
 }
