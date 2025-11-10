@@ -1,12 +1,7 @@
 #!/bin/bash
 
 # ====================================================================
-# CloverAddictivePatches v1.0.0
-# ====================================================================
-# This mod uses a shared utility architecture with cleaner patches.
-# Utilities provide reflection caching, camera accessors, death handling,
-# and menu helpers to reduce code duplication and improve maintainability.
-
+# CloverAddictivePatches Build Script
 # ====================================================================
 # UTILITY FILES (Always included)
 # ====================================================================
@@ -144,7 +139,7 @@ fi
 # COMPILATION
 # ====================================================================
 echo "==============================================="
-echo "Compiling CloverAddictivePatches.dll v1.0.0"
+echo "Compiling CloverAddictivePatches.dll"
 echo "==============================================="
 echo "Game directory: $GAME_DIR"
 echo "Utilities: ${#UTILITY_FILES[@]} file(s)"

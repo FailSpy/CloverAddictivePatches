@@ -7,9 +7,11 @@ using CloverAddictivePatches.Utilities;
 
 namespace CloverAddictivePatches
 {
-    [BepInPlugin("io.github.failspy.qualityclover", "CloverAddictivePatches", "1.0.1")]
+    [BepInPlugin("io.github.failspy.qualityclover", "CloverAddictivePatches", Plugin.Version)]
     public class Plugin : BaseUnityPlugin
     {
+        public const string Version = "1.0.1";
+
         public static Plugin Instance { get; private set; }
 
         public BepInEx.Logging.ManualLogSource ModLogger => Logger;
@@ -47,7 +49,7 @@ namespace CloverAddictivePatches
         void Awake()
         {
             Instance = this;
-            Logger.LogInfo("=== CloverAddictivePatches mod loading (v1.0.1) ===");
+            Logger.LogInfo($"=== CloverAddictivePatches mod loading (v{Version}) ===");
 
             InitializeConfig();
 
@@ -244,7 +246,7 @@ namespace CloverAddictivePatches
             SkipTrapdoorWarningsPatch = Config.Bind(
                 "Quality of Life",
                 "SkipTrapdoorWarningsPatch",
-                true,
+                false,
                 "No shake cutscene during interests phase");
 
             ExtendedTransitionSpeedsPatch = Config.Bind(
@@ -262,13 +264,13 @@ namespace CloverAddictivePatches
             ATMCutsceneFreeroamPatch = Config.Bind(
                 "Quality of Life",
                 "ATMCutsceneFreeroamPatch",
-                true,
+                false,
                 "Free movement and camera control during ATM/interests cutscenes");
 
             NoVertigoInducersPatch = Config.Bind(
                 "Quality of Life",
                 "NoVertigoInducersPatch",
-                true,
+                false,
                 "Removes vertigo-inducing effects (dolly zoom, FOV changes, death animations)");
 
             SmartDepositPatch = Config.Bind(

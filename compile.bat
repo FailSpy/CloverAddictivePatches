@@ -2,12 +2,7 @@
 setlocal enabledelayedexpansion
 
 REM ====================================================================
-REM CloverAddictivePatches v1.0.0 - Windows Build Script
-REM ====================================================================
-REM This mod uses a shared utility architecture with cleaner patches.
-REM Utilities provide reflection caching, camera accessors, death handling,
-REM and menu helpers to reduce code duplication and improve maintainability.
-
+REM CloverAddictivePatches - Windows Build Script
 REM ====================================================================
 REM UTILITY FILES (Always included)
 REM ====================================================================
@@ -170,7 +165,7 @@ REM ====================================================================
 REM COMPILATION
 REM ====================================================================
 echo ===============================================
-echo Compiling CloverAddictivePatches.dll v1.0.0
+echo Compiling CloverAddictivePatches.dll
 echo ===============================================
 echo Game directory: %GAME_DIR%
 echo Compiler: %CSC%
