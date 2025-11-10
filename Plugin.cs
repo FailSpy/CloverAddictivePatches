@@ -34,6 +34,7 @@ namespace CloverAddictivePatches
         public static ConfigEntry<bool> SmartDepositPatch { get; private set; }
         public static ConfigEntry<bool> NewRunConfirmationPatch { get; private set; }
         public static ConfigEntry<bool> QuietDrawersPatch { get; private set; }
+        public static ConfigEntry<bool> HideCoinsTicketsUI { get; private set; }
 
         public static ConfigEntry<bool> BadEndingDialogueSeen { get; private set; }
 
@@ -287,6 +288,12 @@ namespace CloverAddictivePatches
                 "QuietDrawersPatch",
                 true,
                 "Quiet drawer opening (no horror sound/FOV effects for skeleton parts)");
+
+            HideCoinsTicketsUI = Config.Bind(
+                "Debug & Development",
+                "HideCoinsTicketsUI",
+                false,
+                "Hide coins and tickets UI in top corners (useful for screenshots)");
 
             // Dialogue State Tracking Section (not exposed in Mod Options menu to avoid spoilers)
             BadEndingDialogueSeen = Config.Bind(

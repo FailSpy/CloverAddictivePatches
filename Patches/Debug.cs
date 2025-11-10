@@ -17,12 +17,51 @@ namespace CloverAddictivePatches.Patches
             pluginInstance = instance;
         }
 
+        [HarmonyPatch(typeof(GeneralUiScript), "Awake")]
+        [HarmonyPostfix]
+        static void GeneralUiScript_Awake_Postfix(GeneralUiScript __instance)
+        {
+            if (!Plugin.HideCoinsTicketsUI.Value)
+                return;
+
+            // Hide coins and tickets UI for better screenshots
+            if (__instance.coinsHolder != null)
+            {
+                __instance.coinsHolder.gameObject.SetActive(false);
+                pluginInstance.ModLogger.LogInfo("Debug: Disabled coins UI for screenshots");
+            }
+
+            if (__instance.ticketsHolder != null)
+            {
+                __instance.ticketsHolder.gameObject.SetActive(false);
+                pluginInstance.ModLogger.LogInfo("Debug: Disabled tickets UI for screenshots");
+            }
+        }
+
         [HarmonyPatch(typeof(GameplayMaster), "Update")]
         [HarmonyPostfix]
         static void DebugHotkeys()
         {
             if (!Plugin.DebugPatch.Value)
                 return;
+
+            // F6: Toggle screenshot mode (hide/show coins and tickets UI)
+            if (Input.GetKeyDown(KeyCode.F6))
+            {
+                if (GeneralUiScript.instance != null)
+                {
+                    bool newState = !Plugin.HideCoinsTicketsUI.Value;
+                    Plugin.HideCoinsTicketsUI.Value = newState;
+
+                    if (GeneralUiScript.instance.coinsHolder != null)
+                        GeneralUiScript.instance.coinsHolder.gameObject.SetActive(!newState);
+
+                    if (GeneralUiScript.instance.ticketsHolder != null)
+                        GeneralUiScript.instance.ticketsHolder.gameObject.SetActive(!newState);
+
+                    pluginInstance.ModLogger.LogInfo($"Debug: Screenshot mode {(newState ? "ENABLED" : "DISABLED")} (UI hidden: {newState})");
+                }
+            }
 
             if (Input.GetKeyDown(KeyCode.F8))
             {
