@@ -18,6 +18,9 @@ namespace CloverAddictivePatches.Patches
             "DIALOGUE_WELCOME_BACK_ALT_0",
             "DIALOGUE_WELCOME_BACK_ALT_1",
             "DIALOGUE_WELCOME_BACK_ALT_2",
+            "DIALOGUE_INTRO_ALT_0",
+            "DIALOGUE_INTRO_ALT_1",
+            "DIALOGUE_INTRO_ALT_ALT_0",
         };
 
         [HarmonyPatch(typeof(DialogueScript), "SetDialogue", new Type[] { typeof(bool), typeof(string[]) })]
