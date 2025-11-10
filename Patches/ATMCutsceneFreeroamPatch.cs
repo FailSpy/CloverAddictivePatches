@@ -13,6 +13,17 @@ namespace CloverAddictivePatches.Patches
     {
         private static GameplayMaster.GamePhase lastPhase = GameplayMaster.GamePhase.intro;
 
+        private static bool IsBlockedCameraPosition(CameraController.PositionKind kind)
+        {
+            return kind == CameraController.PositionKind.CloverTicketsMachine ||
+                   kind == CameraController.PositionKind.ATM ||
+                   kind == CameraController.PositionKind.ATMStraight ||
+                   kind == CameraController.PositionKind.DeadlineBonus ||
+                   kind == CameraController.PositionKind.RewardBox ||
+                   kind == CameraController.PositionKind.SlotCoinPlate_Fixed ||
+                   kind == CameraController.PositionKind.TrapDoor;
+        }
+
         [HarmonyPatch(typeof(CameraController), "Update")]
         [HarmonyPrefix]
         static void EnsureFreeCameraInCutscenes()
@@ -27,10 +38,11 @@ namespace CloverAddictivePatches.Patches
                 CameraController.SetPosition(CameraController.PositionKind.Free, false, 1f);
             }
 
-            if (currentPhase == GameplayMaster.GamePhase.cutscene)
+            if (currentPhase == GameplayMaster.GamePhase.cutscene || currentPhase == GameplayMaster.GamePhase.gambling)
             {
                 CameraController.PositionKind currentPosKind = CameraController.GetPositionKind();
-                if (currentPosKind != CameraController.PositionKind.Free)
+
+                if (IsBlockedCameraPosition(currentPosKind))
                 {
                     CameraController.SetPosition(CameraController.PositionKind.Free, false, 1f);
                 }
@@ -39,19 +51,25 @@ namespace CloverAddictivePatches.Patches
             lastPhase = currentPhase;
         }
 
-        // Blocks non-Free camera positions during cutscenes
         [HarmonyPatch(typeof(CameraController), "SetPosition")]
         [HarmonyPrefix]
-        static bool PreventCameraGrabDuringCutscenes(CameraController.PositionKind kind)
+        static bool PreventCameraGrabDuringCutscenes(CameraController.PositionKind kind, bool instant, ref float lerpSpeedMultiplier)
         {
             if (!Plugin.ATMCutsceneFreeroamPatch.Value)
                 return true;
 
             GameplayMaster.GamePhase currentPhase = GameplayMaster.GetGamePhase();
-            if (currentPhase != GameplayMaster.GamePhase.cutscene)
+
+            if (currentPhase != GameplayMaster.GamePhase.cutscene && currentPhase != GameplayMaster.GamePhase.gambling)
                 return true;
 
-            if (kind != CameraController.PositionKind.Free)
+            // Maintain lerpSpeed=1.0 for Free camera to prevent input hitching
+            if (kind == CameraController.PositionKind.Free && lerpSpeedMultiplier != 1f)
+            {
+                lerpSpeedMultiplier = 1f;
+            }
+
+            if (IsBlockedCameraPosition(kind))
             {
                 CameraController.SetPosition(CameraController.PositionKind.Free, false, 1f);
                 return false;
@@ -60,7 +78,30 @@ namespace CloverAddictivePatches.Patches
             return true;
         }
 
-        // Enables movement during cutscenes (footstep sounds omitted for simplicity)
+        [HarmonyPatch(typeof(SlotMachineScript), "Set_NoMoreSpins", MethodType.Normal)]
+        [HarmonyPostfix]
+        static void NoSpinsLeft_ForceFreeCam()
+        {
+            if (!Plugin.ATMCutsceneFreeroamPatch.Value)
+                return;
+
+            CameraController.SetPosition(CameraController.PositionKind.Free, false, 1f);
+        }
+
+        [HarmonyPatch(typeof(SlotMachineScript), "TurnOff")]
+        [HarmonyPostfix]
+        static void SlotTurnOff_ForceFreeCam()
+        {
+            if (!Plugin.ATMCutsceneFreeroamPatch.Value)
+                return;
+
+            GameplayMaster.GamePhase currentPhase = GameplayMaster.GetGamePhase();
+            if (currentPhase == GameplayMaster.GamePhase.gambling)
+            {
+                CameraController.SetPosition(CameraController.PositionKind.Free, false, 1f);
+            }
+        }
+
         [HarmonyPatch(typeof(PlayerScript), "Update")]
         [HarmonyPrefix]
         static bool AllowMovementDuringCutscenes(PlayerScript __instance)
@@ -82,6 +123,7 @@ namespace CloverAddictivePatches.Patches
                                      PlatformMaster.IsInitialized() &&
                                      (currentPhase == GameplayMaster.GamePhase.preparation ||
                                       currentPhase == GameplayMaster.GamePhase.cutscene ||
+                                      currentPhase == GameplayMaster.GamePhase.gambling ||
                                       GameplayMaster.EndingFreeRoaming);
 
             if (shouldAllowMovement)
