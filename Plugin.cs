@@ -7,7 +7,7 @@ using CloverAddictivePatches.Utilities;
 
 namespace CloverAddictivePatches
 {
-    [BepInPlugin("io.github.failspy.qualityclover", "CloverAddictivePatches", "1.0.0")]
+    [BepInPlugin("io.github.failspy.qualityclover", "CloverAddictivePatches", "1.0.1")]
     public class Plugin : BaseUnityPlugin
     {
         public static Plugin Instance { get; private set; }
@@ -47,7 +47,7 @@ namespace CloverAddictivePatches
         void Awake()
         {
             Instance = this;
-            Logger.LogInfo("=== CloverAddictivePatches mod loading (v1.0.0) ===");
+            Logger.LogInfo("=== CloverAddictivePatches mod loading (v1.0.1) ===");
 
             InitializeConfig();
 
