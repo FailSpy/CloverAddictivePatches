@@ -53,26 +53,27 @@ namespace CloverAddictivePatches.Patches
 
         [HarmonyPatch(typeof(CameraController), "SetPosition")]
         [HarmonyPrefix]
-        static bool PreventCameraGrabDuringCutscenes(CameraController.PositionKind kind, bool instant, ref float lerpSpeedMultiplier)
+        static bool PreventCameraGrabDuringCutscenes(ref CameraController.PositionKind kind, bool instant, ref float lerpSpeedMultiplier)
         {
             if (!Plugin.ATMCutsceneFreeroamPatch.Value)
                 return true;
+
+            if (kind == CameraController.PositionKind.Free)
+            {
+                if (lerpSpeedMultiplier != 1f)
+                    lerpSpeedMultiplier = 1f;
+                return true;
+            }
 
             GameplayMaster.GamePhase currentPhase = GameplayMaster.GetGamePhase();
 
             if (currentPhase != GameplayMaster.GamePhase.cutscene && currentPhase != GameplayMaster.GamePhase.gambling)
                 return true;
 
-            // Maintain lerpSpeed=1.0 for Free camera to prevent input hitching
-            if (kind == CameraController.PositionKind.Free && lerpSpeedMultiplier != 1f)
-            {
-                lerpSpeedMultiplier = 1f;
-            }
-
             if (IsBlockedCameraPosition(kind))
             {
-                CameraController.SetPosition(CameraController.PositionKind.Free, false, 1f);
-                return false;
+                kind = CameraController.PositionKind.Free;
+                lerpSpeedMultiplier = 1f;
             }
 
             return true;
@@ -137,7 +138,7 @@ namespace CloverAddictivePatches.Patches
                 if (currentPhase != GameplayMaster.GamePhase.intro &&
                     currentPhase != GameplayMaster.GamePhase.tutorialObsolete &&
                     !PowerupTriggerAnimController.HasAnimations() &&
-                    !MemoryPackDealUI.IsDealRunnning() &&
+					!MemoryPackDealUI.IsDealRunnning() &&
                     !DeckBoxUI.IsEnabled() &&
                     !MainMenuScript.IsEnabled() &&
                     !CameraDebug.IsEnabled())
