@@ -69,23 +69,22 @@ namespace CloverAddictivePatches
                 PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.Debug", DebugPatch.Value,
                     initializeAction: () => InitializePatch("CloverAddictivePatches.Patches.Debug", this));
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.DrawerPeek", DrawerPeekPatch.Value,
+                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.DrawerPeek", true,
                     initializeAction: () => InitializePatch("CloverAddictivePatches.Patches.DrawerPeek", this));
 
                 PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.DisableInterestsCutscene", SkipTrapdoorWarningsPatch.Value);
 
                 PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.MainMenuCameraFix", MainMenuCameraFixPatch.Value);
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.MainMenuAdditions", MainMenuAdditionsPatch.Value,
+                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.MainMenuAdditions", true,
                     initializeAction: () => InitializePatch("CloverAddictivePatches.Patches.MainMenuAdditions", this));
 
                 PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.MemoryCardMenuAccess", MemoryCardMenuAccessPatch.Value);
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.InventoryDrawerSwap", InventoryDrawerSwapPatch.Value,
+                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.InventoryDrawerSwap", true,
                     initializeAction: () => InitializePatch("CloverAddictivePatches.Patches.InventoryDrawerSwap", this));
 
-                if (FOVAdjustmentPatch.Value || DollyZoomPatch.Value)
-                    PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.CameraUtils", true);
+                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.CameraUtils", true);
 
                 PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.SkipRepeatedDialogue", SkipRepetitiveWarningsPatch.Value);
 
@@ -103,7 +102,7 @@ namespace CloverAddictivePatches
 
                 PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.SmartDeposit", SmartDepositPatch.Value);
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.NewRunConfirmation", NewRunConfirmationPatch.Value,
+                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.NewRunConfirmation", true,
                     initializeAction: () => InitializePatch("CloverAddictivePatches.Patches.NewRunConfirmation", this));
 
                 PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.DisableDrawerCorpseReaction", QuietDrawersPatch.Value);
