@@ -551,7 +551,11 @@ namespace CloverAddictivePatches.Patches
         private static IEnumerator ReopenModOptionsAfterFOVCoroutine()
         {
             yield return null;
-            OpenModOptionsMenu();
+
+            if (GeneralUiScript.instance != null)
+            {
+                OpenModOptionsMenu();
+            }
         }
 
         // Open Camera & FOV Patches submenu
@@ -738,7 +742,11 @@ namespace CloverAddictivePatches.Patches
         private static IEnumerator BackToModOptionsCoroutine()
         {
             yield return null;
-            OpenModOptionsMenu();
+
+            if (GeneralUiScript.instance != null)
+            {
+                OpenModOptionsMenu();
+            }
         }
 
         // Generic toggle patch helper

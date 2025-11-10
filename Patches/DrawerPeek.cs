@@ -3,6 +3,7 @@ using HarmonyLib;
 using Panik;
 using UnityEngine;
 using System.Reflection;
+using System;
 
 namespace CloverAddictivePatches.Patches
 {
@@ -38,6 +39,15 @@ namespace CloverAddictivePatches.Patches
             myControllerField = AccessTools.Field(typeof(DiegeticMenuElement), "myController");
             hoveredElementProperty = AccessTools.Property(typeof(DiegeticMenuController), "HoveredElement");
 
+            if (Plugin.DebugPatch.Value)
+            {
+                var harmony = new Harmony("io.github.failspy.qualityclover");
+                var original = AccessTools.Method(typeof(DrawersScript), "Update");
+                var prefix = AccessTools.Method(typeof(DrawerPeek), nameof(DrawColliderDebug));
+                harmony.Patch(original, prefix: new HarmonyMethod(prefix));
+                pluginInstance.ModLogger.LogInfo("DrawerPeek: Debug collider visualization enabled");
+            }
+
             pluginInstance.ModLogger.LogInfo("DrawerPeek initialized");
         }
 
@@ -45,6 +55,12 @@ namespace CloverAddictivePatches.Patches
         [HarmonyPostfix]
         static void OnDrawersScriptAwake(DrawersScript __instance)
         {
+            drawerHoverState.Clear();
+            menuElementToDrawerIndex.Clear();
+            drawerCloseTime.Clear();
+            peekOpenedDrawers.Clear();
+            currentlyPeekedDrawer = -1;
+
             ExtendDrawerColliders(__instance);
         }
 
@@ -65,13 +81,9 @@ namespace CloverAddictivePatches.Patches
 
                 box.size = newSize;
                 box.center = newCenter;
-
-                Debug.CreateColliderVisualization(box);
             }
         }
 
-        [HarmonyPatch(typeof(DrawersScript), "Update")]
-        [HarmonyPrefix]
         static void DrawColliderDebug(DrawersScript __instance)
         {
             BoxCollider[] boxColliders = __instance.GetComponentsInChildren<BoxCollider>();
@@ -138,6 +150,9 @@ namespace CloverAddictivePatches.Patches
 
             foreach (DiegeticMenuElement menuElement in allMenuElements)
             {
+                if (menuElement == null)
+                    continue;
+
                 var controller = myControllerField?.GetValue(menuElement) as DiegeticMenuController;
 
                 if (controller == null || !controller.IsRunning())
@@ -152,8 +167,6 @@ namespace CloverAddictivePatches.Patches
 
                 if (isHovered && !wasHovered)
                 {
-                    pluginInstance.ModLogger.LogInfo($"Started hovering drawer menu element: {menuElement.gameObject.name}");
-
                     if (drawerCloseTime.ContainsKey(menuElement))
                     {
                         drawerCloseTime.Remove(menuElement);
@@ -209,7 +222,7 @@ namespace CloverAddictivePatches.Patches
 
         private static bool IsHoveringAnyDrawerElement(DiegeticMenuElement mainMenuElement, DiegeticMenuController controller)
         {
-            if (controller == null)
+            if (mainMenuElement == null || controller == null)
             {
                 return false;
             }

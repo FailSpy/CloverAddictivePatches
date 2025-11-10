@@ -19,6 +19,9 @@ namespace CloverAddictivePatches.Patches
             if (!Plugin.ExtendedTransitionSpeedsPatch.Value)
                 return true;
 
+            if (Data.settings == null)
+                return true;
+
             Sound.Play("SoundMenuSelect");
             Data.settings.transitionSpeed += _selectionDirection;
 

@@ -69,6 +69,9 @@ namespace CloverAddictivePatches.Patches
 
             if (Controls.ActionButton_PressedGet(0, Controls.InputAction.menuPause))
             {
+                if (GameplayMaster.instance == null)
+                    return;
+
                 savedCameraPosition = CameraController.GetPositionKind();
                 CardsInspectorScript.Close();
 

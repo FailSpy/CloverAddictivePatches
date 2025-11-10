@@ -116,6 +116,9 @@ namespace CloverAddictivePatches.Patches
                 return true;
 
             Rigidbody rb = (Rigidbody)rbField.GetValue(__instance);
+            if (rb == null)
+                return true;
+
             int playerIndex = (int)playerIndexField.GetValue(__instance);
 
             GameplayMaster.GamePhase currentPhase = GameplayMaster.GetGamePhase();
@@ -140,6 +143,11 @@ namespace CloverAddictivePatches.Patches
                     !CameraDebug.IsEnabled())
                 {
                     Transform targetTransform = CameraController.GetTargetTransform();
+                    if (targetTransform == null)
+                    {
+                        rb.linearVelocity = Vector3.zero;
+                        return false;
+                    }
 
                     Vector2 input = new Vector2(
                         Controls.ActionAxisPair_GetValue(playerIndex, Controls.InputAction.moveRight, Controls.InputAction.moveLeft),

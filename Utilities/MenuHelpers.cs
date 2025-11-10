@@ -106,25 +106,6 @@ namespace CloverAddictivePatches.Utilities
             }
         }
 
-        // Coroutine methods commented out until ScreenMenuScript.Open signature is determined.
-
-        /*
-        private static IEnumerator OpenMenuCoroutine(string title, UnityAction[] events, float delay)
-        {
-            yield return new WaitForSeconds(delay);
-            // TODO: Determine correct ScreenMenuScript.Open signature
-            // ScreenMenuScript.Open(...);
-        }
-
-        private static IEnumerator OpenMenuWithPositionCoroutine(string title, UnityAction[] events, float yOffset, float delay)
-        {
-            yield return new WaitForSeconds(delay);
-            // TODO: Determine correct ScreenMenuScript.Open signature
-            // ScreenMenuScript.Open(...);
-            ApplyMenuPosition(yOffset);
-        }
-        */
-
         /// <summary>
         /// Returns Yes/No options array for confirmation dialogs.
         /// </summary>

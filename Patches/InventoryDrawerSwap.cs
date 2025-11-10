@@ -18,7 +18,6 @@ namespace CloverAddictivePatches.Patches
         private static Dictionary<int, int> swapOptionIndexToDrawerIndex = new Dictionary<int, int>();
         private static bool menuWasModified = false;
         private static int modifiedMenuOptionCount = 0;
-        private const bool TEST_MODE_FORCE_4_OPTIONS = false;
 
         public static void Initialize(Plugin instance)
         {
@@ -56,29 +55,19 @@ namespace CloverAddictivePatches.Patches
 
             List<int> drawersWithItems = new List<int>();
 
-            if (TEST_MODE_FORCE_4_OPTIONS)
+            for (int i = 0; i < 4; i++)
             {
-                drawersWithItems.Add(0);
-                drawersWithItems.Add(1);
-                drawersWithItems.Add(2);
-                drawersWithItems.Add(3);
-            }
-            else
-            {
-                for (int i = 0; i < 4; i++)
+                PowerupScript drawerPowerup = PowerupScript.GetDrawerPowerup(i);
+                if (drawerPowerup != null &&
+                    DrawersScript.IsDrawerUnlocked(i) &&
+                    drawerPowerup.category != PowerupScript.Category.skeleton)
                 {
-                    PowerupScript drawerPowerup = PowerupScript.GetDrawerPowerup(i);
-                    if (drawerPowerup != null &&
-                        DrawersScript.IsDrawerUnlocked(i) &&
-                        drawerPowerup.category != PowerupScript.Category.skeleton)
-                    {
-                        drawersWithItems.Add(i);
-                    }
+                    drawersWithItems.Add(i);
                 }
-
-                if (drawersWithItems.Count == 0)
-                    return;
             }
+
+            if (drawersWithItems.Count == 0)
+                return;
 
             int newSize = options.Length + drawersWithItems.Count;
             var newOptions = new string[newSize];
@@ -95,16 +84,8 @@ namespace CloverAddictivePatches.Patches
             int currentIndex = 2;
             foreach (int i in drawersWithItems)
             {
-                string itemName;
-                if (TEST_MODE_FORCE_4_OPTIONS)
-                {
-                    itemName = $"Test Item {i}";
-                }
-                else
-                {
-                    PowerupScript drawerPowerup = PowerupScript.GetDrawerPowerup(i);
-                    itemName = drawerPowerup.NameGet(false, false);
-                }
+                PowerupScript drawerPowerup = PowerupScript.GetDrawerPowerup(i);
+                string itemName = drawerPowerup.NameGet(false, false);
 
                 newOptions[currentIndex] = $"Swap with {itemName}";
                 newEvents[currentIndex] = new ScreenMenuScript.OptionEvent(() => SwapWithDrawer(i));
@@ -159,7 +140,10 @@ namespace CloverAddictivePatches.Patches
 
             PowerupScript drawerPowerup = PowerupScript.GetDrawerPowerup(drawerIndex);
             if (drawerPowerup == null)
+            {
+                currentInspectedPowerup = PowerupScript.Identifier.undefined;
                 return;
+            }
 
             PowerupScript.Identifier drawerItem = drawerPowerup.identifier;
             PowerupScript.Identifier equippedItem = currentInspectedPowerup;

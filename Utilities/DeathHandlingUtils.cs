@@ -23,8 +23,6 @@ namespace CloverAddictivePatches.Utilities
         /// </summary>
         public static bool VertigoDeathIntercepted { get; set; }
 
-        private static FlashScreen instantDeathBlackScreen;
-
         /// <summary>
         /// Handles instant "falling" death step: positions camera in void, plays sounds, shows/hides stats.
         /// </summary>
@@ -99,7 +97,7 @@ namespace CloverAddictivePatches.Utilities
             if (CameraGame.firstInstance == null || CameraGame.firstInstance.myCamera == null)
                 return;
 
-            instantDeathBlackScreen = FlashScreen.SpawnEx(
+            FlashScreen.SpawnEx(
                 color: UnityEngine.Color.black,
                 alpha: 1.0f,
                 alphaDecaySpeed: 0.5f,

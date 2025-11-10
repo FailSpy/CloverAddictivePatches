@@ -19,11 +19,13 @@ namespace CloverAddictivePatches.Patches
 
             if (kind == CameraController.PositionKind.MenuDrawer_Menu)
             {
+                if (CameraController.instance == null)
+                    return true;
+
                 CameraAccessors.SetPositionKind(CameraController.instance, kind);
                 CameraAccessors.SetLerpSpeedMultiplier(CameraController.instance, lerpSpeedMultiplier);
                 VirtualCursors.CursorDesiredVisibilitySet(0, true);
 
-                // Skip original to prevent targetTransform change
                 return false;
             }
 

@@ -72,6 +72,13 @@ namespace CloverAddictivePatches.Patches
         {
             yield return null;
 
+            if (storedGeneralUiScript == null)
+            {
+                pluginInstance.ModLogger.LogWarning("NewRunConfirmation: GeneralUiScript was destroyed before confirmation");
+                confirmationPending = false;
+                yield break;
+            }
+
             pluginInstance.ModLogger.LogInfo($"NewRunConfirmation: Coroutine starting, menu enabled: {ScreenMenuScript.IsEnabled()}");
 
             ShowConfirmation(storedGeneralUiScript);
@@ -194,6 +201,13 @@ namespace CloverAddictivePatches.Patches
             pluginInstance.ModLogger.LogInfo("NewRunConfirmation: User confirmed, proceeding with new game");
 
             storedGeneralUiScript = null;
+
+            if (generalUiScript == null)
+            {
+                pluginInstance.ModLogger.LogWarning("NewRunConfirmation: GeneralUiScript null in OnConfirm");
+                confirmationPending = false;
+                return;
+            }
 
             var newGameMethod = typeof(GeneralUiScript).GetMethod("_IntroMenuNewGame", BindingFlags.Instance | BindingFlags.NonPublic);
             if (newGameMethod != null)
