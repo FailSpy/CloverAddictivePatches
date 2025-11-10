@@ -494,13 +494,13 @@ namespace CloverAddictivePatches.Patches
             optionsList.Add("Camera & FOV Patches");
             eventsList.Add(new ScreenMenuScript.OptionEvent(OpenCameraPatches));
 
-            optionsList.Add("QOL: Menu & UI Patches");
+            optionsList.Add("Menu & UI Patches");
             eventsList.Add(new ScreenMenuScript.OptionEvent(OpenQOLMenuPatches));
 
-            optionsList.Add("QOL: Speed & Skip Patches");
+            optionsList.Add("Game Flow Patches");
             eventsList.Add(new ScreenMenuScript.OptionEvent(OpenQOLSpeedPatches));
 
-            optionsList.Add("QOL: Misc Patches");
+            optionsList.Add("Misc Patches");
             eventsList.Add(new ScreenMenuScript.OptionEvent(OpenQOLCameraPatches));
 
             // Always show Back
@@ -641,7 +641,7 @@ namespace CloverAddictivePatches.Patches
                 new ScreenMenuScript.OptionEvent(BackToModOptions)
             };
 
-            ScreenMenuScript.Open(true, false, 5, ScreenMenuScript.Positioning.center, 5f, "QOL: Menu & UI Patches", options, events);
+            ScreenMenuScript.Open(true, false, 5, ScreenMenuScript.Positioning.center, 5f, "Menu & UI Patches", options, events);
             Sound.Play("SoundMenuPopUp");
         }
 
@@ -682,7 +682,7 @@ namespace CloverAddictivePatches.Patches
                 new ScreenMenuScript.OptionEvent(BackToModOptions)
             };
 
-            ScreenMenuScript.Open(true, false, 6, ScreenMenuScript.Positioning.center, 5f, "QOL: Speed & Skip Patches", options, events);
+            ScreenMenuScript.Open(true, false, 6, ScreenMenuScript.Positioning.center, 5f, "Game Flow Patches", options, events);
             Sound.Play("SoundMenuPopUp");
         }
 
@@ -719,7 +719,7 @@ namespace CloverAddictivePatches.Patches
                 new ScreenMenuScript.OptionEvent(BackToModOptions)
             };
 
-            ScreenMenuScript.Open(true, false, 4, ScreenMenuScript.Positioning.center, 5f, "QOL: Misc Patches", options, events);
+            ScreenMenuScript.Open(true, false, 4, ScreenMenuScript.Positioning.center, 5f, "Misc Patches", options, events);
             Sound.Play("SoundMenuPopUp");
         }
 
