@@ -40,6 +40,19 @@ namespace CloverAddictivePatches
 
         public static ConfigEntry<bool> BadEndingDialogueSeen { get; private set; }
 
+        // Drawer collider debug settings
+        public static ConfigEntry<float> TopDrawerDepthMultiplier { get; private set; }
+        public static ConfigEntry<float> TopDrawerWidthMultiplier { get; private set; }
+        public static ConfigEntry<float> TopDrawerHeightMultiplier { get; private set; }
+        public static ConfigEntry<float> OtherDrawerDepthMultiplier { get; private set; }
+        public static ConfigEntry<float> OtherDrawerWidthMultiplier { get; private set; }
+        public static ConfigEntry<float> OtherDrawerHeightMultiplier { get; private set; }
+        public static ConfigEntry<float> TopDrawerOpenDepthOffset { get; private set; }
+        public static ConfigEntry<float> TopDrawerCloseDepthOffset { get; private set; }
+        public static ConfigEntry<float> OtherDrawerOpenDepthOffset { get; private set; }
+        public static ConfigEntry<float> OtherDrawerCloseDepthOffset { get; private set; }
+        public static ConfigEntry<float> DrawerPeekCameraMovementThreshold { get; private set; }
+
         public static ConfigEntry<bool> DebugPatch { get; private set; }
         public static ConfigEntry<bool> SkipIntroPatch { get; private set; }
 
@@ -315,6 +328,95 @@ namespace CloverAddictivePatches
                 "SkipIntroPatch",
                 true,
                 "Skip intro/startup sequences (time saver for development)");
+
+            // Drawer collider settings
+            TopDrawerDepthMultiplier = Config.Bind(
+                "Debug & Development",
+                "TopDrawerDepthMultiplier",
+                7.0f,
+                new ConfigDescription(
+                    "Top drawers (0,1) collider depth multiplier",
+                    new AcceptableValueRange<float>(0.5f, 10.0f)));
+
+            TopDrawerWidthMultiplier = Config.Bind(
+                "Debug & Development",
+                "TopDrawerWidthMultiplier",
+                0.9f,
+                new ConfigDescription(
+                    "Top drawers (0,1) collider width multiplier",
+                    new AcceptableValueRange<float>(0.5f, 3.0f)));
+
+            TopDrawerHeightMultiplier = Config.Bind(
+                "Debug & Development",
+                "TopDrawerHeightMultiplier",
+                0.6f,
+                new ConfigDescription(
+                    "Top drawers (0,1) collider height multiplier",
+                    new AcceptableValueRange<float>(0.5f, 3.0f)));
+
+            OtherDrawerDepthMultiplier = Config.Bind(
+                "Debug & Development",
+                "OtherDrawerDepthMultiplier",
+                7.0f,
+                new ConfigDescription(
+                    "Other drawers collider depth multiplier",
+                    new AcceptableValueRange<float>(0.5f, 10.0f)));
+
+            OtherDrawerWidthMultiplier = Config.Bind(
+                "Debug & Development",
+                "OtherDrawerWidthMultiplier",
+                1.0f,
+                new ConfigDescription(
+                    "Other drawers collider width multiplier",
+                    new AcceptableValueRange<float>(0.5f, 3.0f)));
+
+            OtherDrawerHeightMultiplier = Config.Bind(
+                "Debug & Development",
+                "OtherDrawerHeightMultiplier",
+                1.3f,
+                new ConfigDescription(
+                    "Other drawers collider height multiplier",
+                    new AcceptableValueRange<float>(0.5f, 3.0f)));
+
+            TopDrawerOpenDepthOffset = Config.Bind(
+                "Debug & Development",
+                "TopDrawerOpenDepthOffset",
+                -1.0f,
+                new ConfigDescription(
+                    "Top drawers (0,1) collider depth offset when fully OPEN (negative moves back, positive moves forward)",
+                    new AcceptableValueRange<float>(-2.0f, 2.0f)));
+
+            TopDrawerCloseDepthOffset = Config.Bind(
+                "Debug & Development",
+                "TopDrawerCloseDepthOffset",
+                -0.3f,
+                new ConfigDescription(
+                    "Top drawers (0,1) collider depth offset when fully CLOSED (negative moves back, positive moves forward)",
+                    new AcceptableValueRange<float>(-2.0f, 2.0f)));
+
+            OtherDrawerOpenDepthOffset = Config.Bind(
+                "Debug & Development",
+                "OtherDrawerOpenDepthOffset",
+                -0.8f,
+                new ConfigDescription(
+                    "Other drawers (2-5) collider depth offset when fully OPEN (negative moves back, positive moves forward)",
+                    new AcceptableValueRange<float>(-2.0f, 2.0f)));
+
+            OtherDrawerCloseDepthOffset = Config.Bind(
+                "Debug & Development",
+                "OtherDrawerCloseDepthOffset",
+                -0.2f,
+                new ConfigDescription(
+                    "Other drawers (2-5) collider depth offset when fully CLOSED (negative moves back, positive moves forward)",
+                    new AcceptableValueRange<float>(-2.0f, 2.0f)));
+
+            DrawerPeekCameraMovementThreshold = Config.Bind(
+                "Debug & Development",
+                "DrawerPeekCameraMovementThreshold",
+                0.1f,
+                new ConfigDescription(
+                    "Minimum camera rotation change (in degrees) required before drawer peek can close (prevents flicker)",
+                    new AcceptableValueRange<float>(0.0f, 5.0f)));
 
             Logger.LogInfo("Configuration initialized successfully!");
         }

@@ -503,6 +503,13 @@ namespace CloverAddictivePatches.Patches
             optionsList.Add("Misc Patches");
             eventsList.Add(new ScreenMenuScript.OptionEvent(OpenQOLCameraPatches));
 
+            // Debug options (only show when Debug patch is enabled)
+            if (Plugin.DebugPatch.Value)
+            {
+                optionsList.Add("Debug Options");
+                eventsList.Add(new ScreenMenuScript.OptionEvent(OpenDebugOptions));
+            }
+
             // Always show Back
             optionsList.Add("Back");
             eventsList.Add(new ScreenMenuScript.OptionEvent(OnModOptionsBack));
@@ -727,6 +734,57 @@ namespace CloverAddictivePatches.Patches
             Sound.Play("SoundMenuPopUp");
         }
 
+        // Open Debug Options submenu
+        private static void OpenDebugOptions()
+        {
+            ScreenMenuScript.Close(true);
+
+            if (GeneralUiScript.instance != null)
+            {
+                GeneralUiScript.instance.StartCoroutine(OpenDebugOptionsCoroutine());
+            }
+        }
+
+        private static IEnumerator OpenDebugOptionsCoroutine()
+        {
+            yield return null;
+
+            string[] options = new string[]
+            {
+                $"Hide UI: {(Plugin.HideCoinsTicketsUI.Value ? "On" : "Off")}",
+                "Back"
+            };
+
+            ScreenMenuScript.OptionEvent[] events = new ScreenMenuScript.OptionEvent[]
+            {
+                new ScreenMenuScript.OptionEvent(() => TogglePatch(() => Plugin.HideCoinsTicketsUI.Value, v => Plugin.HideCoinsTicketsUI.Value = v, OpenDebugOptions)),
+                new ScreenMenuScript.OptionEvent(BackToModOptions)
+            };
+
+            ScreenMenuScript.Open(true, false, 2, ScreenMenuScript.Positioning.center, 5f, "Debug Options", options, events);
+            Sound.Play("SoundMenuPopUp");
+        }
+
+        // Back to Debug Options
+        private static void BackToDebugOptions()
+        {
+            ScreenMenuScript.Close(true);
+
+            if (GeneralUiScript.instance != null)
+            {
+                GeneralUiScript.instance.StartCoroutine(BackToDebugOptionsCoroutine());
+            }
+        }
+
+        private static IEnumerator BackToDebugOptionsCoroutine()
+        {
+            yield return null;
+
+            if (GeneralUiScript.instance != null)
+            {
+                GeneralUiScript.instance.StartCoroutine(OpenDebugOptionsCoroutine());
+            }
+        }
 
         // Go back to Mod Options menu from submenu
         private static void BackToModOptions()
