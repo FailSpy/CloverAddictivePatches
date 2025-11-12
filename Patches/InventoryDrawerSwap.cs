@@ -177,6 +177,19 @@ namespace CloverAddictivePatches.Patches
                 return;
             }
 
+            // Verify the item was actually equipped (not just that Equip() returned true)
+            // This handles cases like overfull inventory (9/8 charms) where Equip() shows
+            // "You don't have enough slots" dialogue but returns true
+            if (!PowerupScript.IsEquipped(drawerItem))
+            {
+                // Equip claimed success but item isn't actually equipped - rollback
+                PowerupScript.array_InDrawer[drawerIndex] = null;
+                PowerupScript.Equip(equippedItem, false, false);
+                PowerupScript.PutInDrawer(drawerItem, false, drawerIndex);
+                return;
+            }
+
+            // Only perform cleanup if swap fully succeeded
             Sound.Play("SoundMenuSelect");
 
             PowerupScript.inspectedPowerup = null;
