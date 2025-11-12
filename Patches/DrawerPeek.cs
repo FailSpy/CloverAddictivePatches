@@ -671,7 +671,7 @@ namespace CloverAddictivePatches.Patches
             peekOpenedDrawers.Add(index);
             currentlyPeekedDrawer = index;
 
-            Sound.Play("SoundDrawerOpen", 1f, 1f);
+            Sound.Play("SoundDrawerOpen", Plugin.DrawerPeekVolume.Value, 1f);
 
             PowerupScript drawerPowerup = PowerupScript.GetDrawerPowerup(index);
             if (drawerPowerup != null)
@@ -704,7 +704,7 @@ namespace CloverAddictivePatches.Patches
 
             peekOpenedDrawers.Remove(index);
 
-            Sound.Play("SoundDrawerClose", 1f, 1f);
+            Sound.Play("SoundDrawerClose", Plugin.DrawerPeekVolume.Value, 1f);
 
             if (currentlyPeekedDrawer == index)
             {

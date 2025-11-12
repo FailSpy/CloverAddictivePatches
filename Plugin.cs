@@ -21,6 +21,7 @@ namespace CloverAddictivePatches
         public static ConfigEntry<bool> DollyZoomPatch { get; private set; }
 
         public static ConfigEntry<bool> DrawerPeekPatch { get; private set; }
+        public static ConfigEntry<float> DrawerPeekVolume { get; private set; }
         public static ConfigEntry<bool> MainMenuCameraFixPatch { get; private set; }
         public static ConfigEntry<bool> MainMenuAdditionsPatch { get; private set; }
         public static ConfigEntry<bool> MemoryCardMenuAccessPatch { get; private set; }
@@ -212,6 +213,14 @@ namespace CloverAddictivePatches
                 "DrawerPeekPatch",
                 true,
                 "Drawer peek - drawers open slightly when hovering over them");
+
+            DrawerPeekVolume = Config.Bind(
+                "Quality of Life",
+                "DrawerPeekVolume",
+                0.375f,
+                new ConfigDescription(
+                    "Volume of drawer open/close sounds during peek (0.0 = silent, 1.0 = full volume). Does not affect regular drawer opening.",
+                    new AcceptableValueRange<float>(0.0f, 1.0f)));
 
             MainMenuCameraFixPatch = Config.Bind(
                 "Quality of Life",
