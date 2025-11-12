@@ -42,6 +42,7 @@ PATCH_FILES=(
     "Patches/NewRunConfirmation.cs"
     "Patches/QuietDrawersPatch.cs"                 # Quiet drawer opening (no corpse horror)
     "Patches/ReduceSkipDelays.cs"
+    "Patches/ReducedMotion.cs"                     # Reduced Motion accessibility patch
     "Patches/SkipRepetitiveWarnings.cs"            # Skip repetitive warnings and restart anecdotes
     "Patches/SmartDeposit.cs"
     "Patches/NoVertigoInducersPatch.cs"            # No vertigo-inducing effects

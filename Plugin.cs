@@ -10,7 +10,7 @@ namespace CloverAddictivePatches
     [BepInPlugin("io.github.failspy.qualityclover", "CloverAddictivePatches", Plugin.Version)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string Version = "1.0.3";
+        public const string Version = "1.0.4";
 
         public static Plugin Instance { get; private set; }
 
@@ -38,6 +38,7 @@ namespace CloverAddictivePatches
         public static ConfigEntry<bool> NewRunConfirmationPatch { get; private set; }
         public static ConfigEntry<bool> QuietDrawersPatch { get; private set; }
         public static ConfigEntry<bool> HideCoinsTicketsUI { get; private set; }
+        public static ConfigEntry<bool> ReducedMotionPatch { get; private set; }
 
         public static ConfigEntry<bool> BadEndingDialogueSeen { get; private set; }
 
@@ -120,6 +121,8 @@ namespace CloverAddictivePatches
                     initializeAction: () => InitializePatch("CloverAddictivePatches.Patches.NewRunConfirmation", this));
 
                 PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.DisableDrawerCorpseReaction", QuietDrawersPatch.Value);
+
+                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.ReducedMotion", ReducedMotionPatch.Value);
 
                 Logger.LogInfo("Harmony patches applied successfully!");
             }
@@ -311,6 +314,12 @@ namespace CloverAddictivePatches
                 "QuietDrawersPatch",
                 true,
                 "Quiet drawer opening (no horror sound/FOV effects for skeleton parts)");
+
+            ReducedMotionPatch = Config.Bind(
+                "Quality of Life",
+                "ReducedMotionPatch",
+                false,
+                "Reduced Motion (Accessibility) - Completely disables all automatic camera movements, forcing the camera to always stay in Free mode. Useful for preventing motion sickness.");
 
             HideCoinsTicketsUI = Config.Bind(
                 "Debug & Development",

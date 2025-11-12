@@ -68,6 +68,122 @@ namespace CloverAddictivePatches.Patches
                 DialogueScript.SetDialogue(false, "DIALOGUE_WELCOME_BACK_AFTER_BAD_ENDING");
                 pluginInstance.ModLogger.LogInfo("Debug: Playing DIALOGUE_WELCOME_BACK_AFTER_BAD_ENDING");
             }
+
+            // ===== CINEMATIC CAMERA POSITION DEBUG KEYS =====
+            // Using number row and standard keyboard keys for cinematic camera positions
+            // (matches game's actual cinematic calls)
+
+            // 1 (or Numpad 1): ATM (Interests cutscene camera)
+            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.ATM, false, 1f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> ATM (false, 1f) [Interests cutscene]");
+            }
+
+            // 2 (or Numpad 2): ATM Straight (Deal/deadline cutscenes)
+            if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.ATMStraight, false, 1f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> ATMStraight (false, 1f) [Deal/deadline cutscenes]");
+            }
+
+            // 3 (or Numpad 3): Reward Box (Reward box cutscene)
+            if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.RewardBox, false, 1f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> RewardBox (false, 1f) [Reward box cutscene]");
+            }
+
+            // 4 (or Numpad 4): Clover Tickets Machine (Clover tickets cutscene)
+            if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Keypad4))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.CloverTicketsMachine, false, 1f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> CloverTicketsMachine (false, 1f) [Clover tickets cutscene]");
+            }
+
+            // 5 (or Numpad 5): Deadline Bonus (Deadline bonus cutscene)
+            if (Input.GetKeyDown(KeyCode.Alpha5) || Input.GetKeyDown(KeyCode.Keypad5))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.DeadlineBonus, false, 1f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> DeadlineBonus (false, 1f) [Deadline bonus cutscene]");
+            }
+
+            // 6 (or Numpad 6): Falling (Death fall camera)
+            if (Input.GetKeyDown(KeyCode.Alpha6) || Input.GetKeyDown(KeyCode.Keypad6))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.Falling, false, 1f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> Falling (false, 1f) [Death fall]");
+            }
+
+            // 7 (or Numpad 7): Trap Door (Trapdoor shake)
+            if (Input.GetKeyDown(KeyCode.Alpha7) || Input.GetKeyDown(KeyCode.Keypad7))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.TrapDoor, false, 1f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> TrapDoor (false, 1f) [Trapdoor shake]");
+            }
+
+            // 8 (or Numpad 8): Door Ending Scene (Ending cutscene)
+            if (Input.GetKeyDown(KeyCode.Alpha8) || Input.GetKeyDown(KeyCode.Keypad8))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.doorEndingScene, true, 1f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> doorEndingScene (true, 1f) [Ending cutscene]");
+            }
+
+            // 9 (or Numpad 9): Terminal (Terminal camera)
+            if (Input.GetKeyDown(KeyCode.Alpha9) || Input.GetKeyDown(KeyCode.Keypad9))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.terminal, false, 1f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> terminal (false, 1f) [Terminal]");
+            }
+
+            // 0 (or Numpad 0): Slot From Top (Phone transformation)
+            if (Input.GetKeyDown(KeyCode.Alpha0) || Input.GetKeyDown(KeyCode.Keypad0))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.SlotFromTop, false, 2f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> SlotFromTop (false, 2f) [Phone transformation]");
+            }
+
+            // / (or Numpad /): Store view
+            if (Input.GetKeyDown(KeyCode.Slash) || Input.GetKeyDown(KeyCode.KeypadDivide))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.Store, false, 1f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> Store (false, 1f) [Store view]");
+            }
+
+            // [ (or Numpad *): All Drawers view
+            if (Input.GetKeyDown(KeyCode.LeftBracket) || Input.GetKeyDown(KeyCode.KeypadMultiply))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.DrawersAll, false, 1f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> DrawersAll (false, 1f) [All drawers view]");
+            }
+
+            // - (or Numpad -): Room Top View
+            if (Input.GetKeyDown(KeyCode.Minus) || Input.GetKeyDown(KeyCode.KeypadMinus))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.RoomTopView, true, 1f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> RoomTopView (true, 1f) [Top view transition]");
+            }
+
+            // = (or Numpad +): Slot Machine
+            if (Input.GetKeyDown(KeyCode.Equals) || Input.GetKeyDown(KeyCode.KeypadPlus))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.Slot_Fixed, false, 1f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> Slot_Fixed (false, 1f) [Slot machine]");
+            }
+
+            // Return/Enter (or Numpad Enter): Slot Coin Plate
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.SlotCoinPlate_Fixed, false, 1f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> SlotCoinPlate_Fixed (false, 1f) [Coin plate]");
+            }
+
+            // . (or Numpad .): Free Camera (reset to normal)
+            if (Input.GetKeyDown(KeyCode.Period) || Input.GetKeyDown(KeyCode.KeypadPeriod))
+            {
+                CameraController.SetPosition(CameraController.PositionKind.Free, false, 1f);
+                pluginInstance.ModLogger.LogInfo("Debug: Camera -> Free (false, 1f) [Free camera]");
+            }
         }
 
         public static void CreateColliderVisualization(BoxCollider box)

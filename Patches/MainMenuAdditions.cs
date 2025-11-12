@@ -595,6 +595,10 @@ namespace CloverAddictivePatches.Patches
             optionsList.Add($"No Vertigo Inducers: {(Plugin.NoVertigoInducersPatch.Value ? "On" : "Off")}");
             eventsList.Add(new ScreenMenuScript.OptionEvent(() => TogglePatch(() => Plugin.NoVertigoInducersPatch.Value, v => Plugin.NoVertigoInducersPatch.Value = v, OpenCameraPatches)));
 
+            // Always show Reduced Motion
+            optionsList.Add($"Reduced Motion: {(Plugin.ReducedMotionPatch.Value ? "On" : "Off")}");
+            eventsList.Add(new ScreenMenuScript.OptionEvent(() => TogglePatch(() => Plugin.ReducedMotionPatch.Value, v => Plugin.ReducedMotionPatch.Value = v, OpenCameraPatches)));
+
             // Only show Dolly Zoom if No Vertigo Inducers is OFF
             if (!Plugin.NoVertigoInducersPatch.Value)
             {
