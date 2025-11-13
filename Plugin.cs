@@ -10,7 +10,7 @@ namespace CloverAddictivePatches
     [BepInPlugin("io.github.failspy.qualityclover", "CloverAddictivePatches", Plugin.Version)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string Version = "1.0.4";
+        public const string Version = "1.0.4a";
 
         public static Plugin Instance { get; private set; }
 

@@ -184,6 +184,108 @@ namespace CloverAddictivePatches.Patches
                 CameraController.SetPosition(CameraController.PositionKind.Free, false, 1f);
                 pluginInstance.ModLogger.LogInfo("Debug: Camera -> Free (false, 1f) [Free camera]");
             }
+
+            // F9: Force equip a charm (ignores space limits - for testing overflow scenarios)
+            if (Input.GetKeyDown(KeyCode.F9))
+            {
+                ForceEquipCharm();
+            }
+
+            // F10: Give 100 clover tickets (for buying items from store)
+            if (Input.GetKeyDown(KeyCode.F10))
+            {
+                GiveTickets();
+            }
+        }
+
+        /// <summary>
+        /// Force-equips a charm, bypassing inventory space limits.
+        /// Uses charms from drawers or not-bought list for testing overflow scenarios (8/7 charms).
+        /// </summary>
+        private static void ForceEquipCharm()
+        {
+            // Get current charm count
+            int normalCount = PowerupScript.list_EquippedNormal.Count;
+            int maxCharms = GameplayData.MaxEquippablePowerupsGet(true);
+
+            pluginInstance.ModLogger.LogInfo($"Debug: Current charms: {normalCount}/{maxCharms}");
+
+            // Find a charm to equip from drawers
+            PowerupScript.Identifier charmToEquip = PowerupScript.Identifier.undefined;
+            int drawerIndex = -1;
+
+            for (int i = 0; i < PowerupScript.array_InDrawer.Length; i++)
+            {
+                PowerupScript drawerPowerup = PowerupScript.array_InDrawer[i];
+                if (drawerPowerup != null &&
+                    drawerPowerup.category == PowerupScript.Category.normal &&
+                    !PowerupScript.IsEquipped(drawerPowerup.identifier))
+                {
+                    charmToEquip = drawerPowerup.identifier;
+                    drawerIndex = i;
+                    break;
+                }
+            }
+
+            // If no drawer charms, try not-bought list
+            if (charmToEquip == PowerupScript.Identifier.undefined)
+            {
+                foreach (PowerupScript powerup in PowerupScript.list_NotBought)
+                {
+                    if (powerup.category == PowerupScript.Category.normal)
+                    {
+                        charmToEquip = powerup.identifier;
+                        break;
+                    }
+                }
+            }
+
+            if (charmToEquip == PowerupScript.Identifier.undefined)
+            {
+                pluginInstance.ModLogger.LogError("Debug: No available charms to force-equip! Try putting a charm in a drawer first.");
+                return;
+            }
+
+            pluginInstance.ModLogger.LogInfo($"Debug: Force equipping {charmToEquip}" +
+                (drawerIndex >= 0 ? $" from drawer {drawerIndex}" : " from not-bought list"));
+
+            // Set flag to ignore space check
+            PowerupScript.EquipFlag_IgnoreSpaceCondition();
+
+            // Try to equip the charm
+            bool success = PowerupScript.Equip(charmToEquip, false, true);
+
+            if (success)
+            {
+                int newCount = PowerupScript.list_EquippedNormal.Count;
+                pluginInstance.ModLogger.LogInfo($"Debug: Successfully force-equipped {charmToEquip}! New count: {newCount}/{maxCharms}");
+
+                if (newCount > maxCharms)
+                {
+                    pluginInstance.ModLogger.LogWarning($"Debug: OVERFLOW! {newCount}/{maxCharms} charms - perfect for testing drawer swap failures!");
+                }
+            }
+            else
+            {
+                pluginInstance.ModLogger.LogError($"Debug: Failed to force-equip {charmToEquip}");
+            }
+        }
+
+        /// <summary>
+        /// Gives the player 100 clover tickets for buying items from the store.
+        /// </summary>
+        private static void GiveTickets()
+        {
+            long currentTickets = GameplayData.CloverTicketsGet();
+            long ticketsToAdd = 100;
+
+            GameplayData.CloverTicketsAdd(ticketsToAdd, false);
+
+            long newTickets = GameplayData.CloverTicketsGet();
+            pluginInstance.ModLogger.LogInfo($"Debug: Gave {ticketsToAdd} clover tickets! ({currentTickets} -> {newTickets})");
+
+            // Play a sound for feedback
+            Sound.Play("SoundMenuSelect");
         }
 
         public static void CreateColliderVisualization(BoxCollider box)
