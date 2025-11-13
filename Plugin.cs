@@ -10,7 +10,7 @@ namespace CloverAddictivePatches
     [BepInPlugin("io.github.failspy.qualityclover", "CloverAddictivePatches", Plugin.Version)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string Version = "1.0.4a";
+        public const string Version = "1.0.5";
 
         public static Plugin Instance { get; private set; }
 
@@ -123,6 +123,7 @@ namespace CloverAddictivePatches
                 PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.DisableDrawerCorpseReaction", QuietDrawersPatch.Value);
 
                 PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.ReducedMotion", ReducedMotionPatch.Value);
+
 
                 Logger.LogInfo("Harmony patches applied successfully!");
             }

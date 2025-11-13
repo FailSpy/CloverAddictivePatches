@@ -5,9 +5,9 @@
     <AssemblyName>CloverAddictivePatches</AssemblyName>
     <RootNamespace>CloverAddictivePatches</RootNamespace>
     <Product>CloverAddictivePatches</Product>
-    <Version>1.0.4a</Version>
-    <AssemblyVersion>1.0.4a</AssemblyVersion>
-    <FileVersion>1.0.4a</FileVersion>
+    <Version>1.0.5</Version>
+    <AssemblyVersion>1.0.5</AssemblyVersion>
+    <FileVersion>1.0.5</FileVersion>
     <Authors>FailSpy</Authors>
     <Description>Quality of Life mod for CloverPit with camera fixes, UI improvements, and gameplay enhancements</Description>
   </PropertyGroup>
