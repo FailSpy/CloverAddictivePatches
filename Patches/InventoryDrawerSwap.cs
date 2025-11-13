@@ -6,14 +6,10 @@ using UnityEngine;
 
 namespace CloverAddictivePatches.Patches
 {
-    /// <summary>
-    /// Swaps equipped powerups with drawer items from inventory menu.
-    /// </summary>
     [HarmonyPatch]
     public class InventoryDrawerSwap
     {
         private static Plugin pluginInstance;
-
         private static PowerupScript.Identifier currentInspectedPowerup = PowerupScript.Identifier.undefined;
         private static Dictionary<int, int> swapOptionIndexToDrawerIndex = new Dictionary<int, int>();
         private static bool menuWasModified = false;
@@ -38,7 +34,6 @@ namespace CloverAddictivePatches.Patches
             if (options == null || options.Length != 3)
                 return;
 
-            // Menu opens before InspectorScript.Open_AsPowerup(), so use PowerupScript.inspectedPowerup
             PowerupScript inspectedPowerup = PowerupScript.inspectedPowerup;
             if (inspectedPowerup == null)
                 return;
@@ -47,7 +42,6 @@ namespace CloverAddictivePatches.Patches
             if (drawerIndex >= 0)
                 return;
 
-            // Skeleton items don't use inventory space normally
             if (inspectedPowerup.category == PowerupScript.Category.skeleton)
                 return;
 
@@ -75,7 +69,6 @@ namespace CloverAddictivePatches.Patches
 
             newOptions[0] = options[0];
             newEvents[0] = optionEvents[0];
-
             newOptions[1] = options[1];
             newEvents[1] = optionEvents[1];
 
@@ -89,7 +82,6 @@ namespace CloverAddictivePatches.Patches
 
                 newOptions[currentIndex] = $"Swap with {itemName}";
                 newEvents[currentIndex] = new ScreenMenuScript.OptionEvent(() => SwapWithDrawer(i));
-
                 swapOptionIndexToDrawerIndex[currentIndex] = i;
 
                 currentIndex++;
@@ -105,32 +97,29 @@ namespace CloverAddictivePatches.Patches
             modifiedMenuOptionCount = newSize;
         }
 
-        /// <summary>
-        /// Shifts menu upward when >4 options to prevent falling off screen bottom.
-        /// </summary>
         [HarmonyPatch(typeof(ScreenMenuScript), "Open")]
         [HarmonyPostfix]
         static void ApplyCustomPositioning_Postfix()
         {
-            if (!menuWasModified)
-                return;
-
-            if (modifiedMenuOptionCount <= 4)
+            if (!menuWasModified || modifiedMenuOptionCount <= 4)
                 return;
 
             float menuHeight = ScreenMenuScript.instance.backImage.rectTransform.sizeDelta.y;
-
-            // 4-option menu baseline ~170 canvas units
             float baselineHeight = 170f;
             float extraHeight = Mathf.Max(0, menuHeight - baselineHeight);
-
-            // Shift upward to preserve bottom margin
             float marginBuffer = 40f;
             float yPosition = -20f - (menuHeight / 2f) + extraHeight + marginBuffer;
 
             ScreenMenuScript.instance.positionShifter.anchoredPosition = new Vector2(0f, yPosition);
+        }
 
-            pluginInstance.ModLogger.LogInfo($"Applied custom positioning: menuHeight={menuHeight}, yPosition={yPosition}, optionCount={modifiedMenuOptionCount}");
+        private static void CleanupAfterFailedSwap()
+        {
+            PowerupScript.inspectedPowerup = null;
+            VirtualCursors.CursorDesiredVisibilitySet(0, false);
+            DrawersScript.CloseAll();
+            InspectorScript.Close();
+            currentInspectedPowerup = PowerupScript.Identifier.undefined;
         }
 
         private static void SwapWithDrawer(int drawerIndex)
@@ -148,8 +137,12 @@ namespace CloverAddictivePatches.Patches
             PowerupScript.Identifier drawerItem = drawerPowerup.identifier;
             PowerupScript.Identifier equippedItem = currentInspectedPowerup;
 
-            // ThrowAway -> PutInDrawer -> Equip sequence to manage powerup lists correctly
-            // ThrowAway adds drawer item to list_NotBought so it can be equipped
+            PowerupScript equippedPowerup = PowerupScript.FindPowerup(equippedItem, out bool isEquipped, out bool isInDrawer);
+            if (equippedPowerup == null || !isEquipped)
+                return;
+
+            int equippedPosition = PowerupScript.list_EquippedNormal.IndexOf(equippedPowerup);
+
             PowerupScript.ThrowAwayCanTriggerEffects_Set(false);
             PowerupScript.SuppressThrowAwaySound();
             PowerupScript.SuppressThrowAwayAnimation();
@@ -160,44 +153,84 @@ namespace CloverAddictivePatches.Patches
                 return;
 
             bool putSuccess = PowerupScript.PutInDrawer(equippedItem, false, drawerIndex);
-
             if (!putSuccess)
             {
                 PowerupScript.PutInDrawer(drawerItem, false, drawerIndex);
+                CleanupAfterFailedSwap();
                 return;
             }
 
             bool equipSuccess = PowerupScript.Equip(drawerItem, false, false);
-
             if (!equipSuccess)
             {
-                PowerupScript.array_InDrawer[drawerIndex] = null;
-                PowerupScript.Equip(equippedItem, false, false);
-                PowerupScript.PutInDrawer(drawerItem, false, drawerIndex);
+                RollbackSwap(equippedItem, drawerItem, drawerIndex, equippedPosition);
                 return;
             }
 
-            // Verify the item was actually equipped (not just that Equip() returned true)
-            // This handles cases like overfull inventory (9/8 charms) where Equip() shows
-            // "You don't have enough slots" dialogue but returns true
             if (!PowerupScript.IsEquipped(drawerItem))
             {
-                // Equip claimed success but item isn't actually equipped - rollback
-                PowerupScript.array_InDrawer[drawerIndex] = null;
-                PowerupScript.Equip(equippedItem, false, false);
-                PowerupScript.PutInDrawer(drawerItem, false, drawerIndex);
+                RollbackSwap(equippedItem, drawerItem, drawerIndex, equippedPosition);
                 return;
             }
 
-            // Only perform cleanup if swap fully succeeded
-            Sound.Play("SoundMenuSelect");
+            // Position-preserving: move drawer item to equipped item's original position
+            PowerupScript drawerPowerupNowEquipped = PowerupScript.FindPowerup(drawerItem, out _, out _);
+            if (drawerPowerupNowEquipped != null && equippedPosition >= 0)
+            {
+                PowerupScript.list_EquippedNormal.Remove(drawerPowerupNowEquipped);
 
+                if (equippedPosition <= PowerupScript.list_EquippedNormal.Count)
+                    PowerupScript.list_EquippedNormal.Insert(equippedPosition, drawerPowerupNowEquipped);
+                else
+                    PowerupScript.list_EquippedNormal.Add(drawerPowerupNowEquipped);
+
+                PowerupScript.RefreshPlacementAll();
+            }
+
+            Sound.Play("SoundMenuSelect");
             PowerupScript.inspectedPowerup = null;
             VirtualCursors.CursorDesiredVisibilitySet(0, false);
             DrawersScript.CloseAll();
             InspectorScript.Close();
-
             currentInspectedPowerup = PowerupScript.Identifier.undefined;
+        }
+
+        private static void RollbackSwap(
+            PowerupScript.Identifier equippedItem,
+            PowerupScript.Identifier drawerItem,
+            int drawerIndex,
+            int equippedPosition)
+        {
+            PowerupScript equippedPowerupInDrawer = PowerupScript.GetDrawerPowerup(drawerIndex);
+            if (equippedPowerupInDrawer != null)
+            {
+                PowerupScript.ThrowAwayCanTriggerEffects_Set(false);
+                PowerupScript.SuppressThrowAwaySound();
+                PowerupScript.SuppressThrowAwayAnimation();
+                PowerupScript.ThrowAway(equippedItem, false);
+                PowerupScript.ThrowAwayCanTriggerEffects_Set(true);
+
+                // Force re-equip bypasses inventory space limits
+                PowerupScript.EquipFlag_IgnoreSpaceCondition();
+                PowerupScript.Equip(equippedItem, false, false);
+
+                // Position-preserving rollback: restore to original position
+                PowerupScript reequippedPowerup = PowerupScript.FindPowerup(equippedItem, out _, out _);
+                if (reequippedPowerup != null && equippedPosition >= 0)
+                {
+                    PowerupScript.list_EquippedNormal.Remove(reequippedPowerup);
+
+                    if (equippedPosition <= PowerupScript.list_EquippedNormal.Count)
+                        PowerupScript.list_EquippedNormal.Insert(equippedPosition, reequippedPowerup);
+                    else
+                        PowerupScript.list_EquippedNormal.Add(reequippedPowerup);
+
+                    PowerupScript.RefreshPlacementAll();
+                }
+            }
+
+            PowerupScript.PutInDrawer(drawerItem, false, drawerIndex);
+            CleanupAfterFailedSwap();
         }
     }
 }
