@@ -1,8 +1,8 @@
 using HarmonyLib;
 using Panik;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
+using CloverAddictivePatches.Utilities;
 
 namespace CloverAddictivePatches.Patches
 {
@@ -113,124 +113,25 @@ namespace CloverAddictivePatches.Patches
             ScreenMenuScript.instance.positionShifter.anchoredPosition = new Vector2(0f, yPosition);
         }
 
-        private static void CleanupAfterFailedSwap()
-        {
-            PowerupScript.inspectedPowerup = null;
-            VirtualCursors.CursorDesiredVisibilitySet(0, false);
-            DrawersScript.CloseAll();
-            InspectorScript.Close();
-            currentInspectedPowerup = PowerupScript.Identifier.undefined;
-        }
-
         private static void SwapWithDrawer(int drawerIndex)
         {
             if (currentInspectedPowerup == PowerupScript.Identifier.undefined)
                 return;
 
-            PowerupScript drawerPowerup = PowerupScript.GetDrawerPowerup(drawerIndex);
-            if (drawerPowerup == null)
-            {
-                currentInspectedPowerup = PowerupScript.Identifier.undefined;
-                return;
-            }
+            bool swapSuccess = ItemPrimitives.SwapEquippedWithDrawer(
+                currentInspectedPowerup,
+                drawerIndex,
+                preservePosition: true
+            );
 
-            PowerupScript.Identifier drawerItem = drawerPowerup.identifier;
-            PowerupScript.Identifier equippedItem = currentInspectedPowerup;
-
-            PowerupScript equippedPowerup = PowerupScript.FindPowerup(equippedItem, out bool isEquipped, out bool isInDrawer);
-            if (equippedPowerup == null || !isEquipped)
-                return;
-
-            int equippedPosition = PowerupScript.list_EquippedNormal.IndexOf(equippedPowerup);
-
-            PowerupScript.ThrowAwayCanTriggerEffects_Set(false);
-            PowerupScript.SuppressThrowAwaySound();
-            PowerupScript.SuppressThrowAwayAnimation();
-            bool throwSuccess = PowerupScript.ThrowAway(drawerItem, false);
-            PowerupScript.ThrowAwayCanTriggerEffects_Set(true);
-
-            if (!throwSuccess)
-                return;
-
-            bool putSuccess = PowerupScript.PutInDrawer(equippedItem, false, drawerIndex);
-            if (!putSuccess)
-            {
-                PowerupScript.PutInDrawer(drawerItem, false, drawerIndex);
-                CleanupAfterFailedSwap();
-                return;
-            }
-
-            bool equipSuccess = PowerupScript.Equip(drawerItem, false, false);
-            if (!equipSuccess)
-            {
-                RollbackSwap(equippedItem, drawerItem, drawerIndex, equippedPosition);
-                return;
-            }
-
-            if (!PowerupScript.IsEquipped(drawerItem))
-            {
-                RollbackSwap(equippedItem, drawerItem, drawerIndex, equippedPosition);
-                return;
-            }
-
-            // Position-preserving: move drawer item to equipped item's original position
-            PowerupScript drawerPowerupNowEquipped = PowerupScript.FindPowerup(drawerItem, out _, out _);
-            if (drawerPowerupNowEquipped != null && equippedPosition >= 0)
-            {
-                PowerupScript.list_EquippedNormal.Remove(drawerPowerupNowEquipped);
-
-                if (equippedPosition <= PowerupScript.list_EquippedNormal.Count)
-                    PowerupScript.list_EquippedNormal.Insert(equippedPosition, drawerPowerupNowEquipped);
-                else
-                    PowerupScript.list_EquippedNormal.Add(drawerPowerupNowEquipped);
-
-                PowerupScript.RefreshPlacementAll();
-            }
-
-            Sound.Play("SoundMenuSelect");
             PowerupScript.inspectedPowerup = null;
             VirtualCursors.CursorDesiredVisibilitySet(0, false);
             DrawersScript.CloseAll();
             InspectorScript.Close();
             currentInspectedPowerup = PowerupScript.Identifier.undefined;
-        }
 
-        private static void RollbackSwap(
-            PowerupScript.Identifier equippedItem,
-            PowerupScript.Identifier drawerItem,
-            int drawerIndex,
-            int equippedPosition)
-        {
-            PowerupScript equippedPowerupInDrawer = PowerupScript.GetDrawerPowerup(drawerIndex);
-            if (equippedPowerupInDrawer != null)
-            {
-                PowerupScript.ThrowAwayCanTriggerEffects_Set(false);
-                PowerupScript.SuppressThrowAwaySound();
-                PowerupScript.SuppressThrowAwayAnimation();
-                PowerupScript.ThrowAway(equippedItem, false);
-                PowerupScript.ThrowAwayCanTriggerEffects_Set(true);
-
-                // Force re-equip bypasses inventory space limits
-                PowerupScript.EquipFlag_IgnoreSpaceCondition();
-                PowerupScript.Equip(equippedItem, false, false);
-
-                // Position-preserving rollback: restore to original position
-                PowerupScript reequippedPowerup = PowerupScript.FindPowerup(equippedItem, out _, out _);
-                if (reequippedPowerup != null && equippedPosition >= 0)
-                {
-                    PowerupScript.list_EquippedNormal.Remove(reequippedPowerup);
-
-                    if (equippedPosition <= PowerupScript.list_EquippedNormal.Count)
-                        PowerupScript.list_EquippedNormal.Insert(equippedPosition, reequippedPowerup);
-                    else
-                        PowerupScript.list_EquippedNormal.Add(reequippedPowerup);
-
-                    PowerupScript.RefreshPlacementAll();
-                }
-            }
-
-            PowerupScript.PutInDrawer(drawerItem, false, drawerIndex);
-            CleanupAfterFailedSwap();
+            if (swapSuccess)
+                Sound.Play("SoundMenuSelect");
         }
     }
 }

@@ -522,7 +522,7 @@ namespace CloverAddictivePatches.Patches
             int backIndex = options.Length - 1;
 
             ScreenMenuScript.Open(
-                true,  // resetCursor
+                false, // resetCursor
                 false, // closeOnSelect
                 backIndex, // cancelOptionIndex
                 ScreenMenuScript.Positioning.center,
@@ -617,7 +617,7 @@ namespace CloverAddictivePatches.Patches
             // Back button is always the last index
             int backIndex = options.Length - 1;
 
-            ScreenMenuScript.Open(true, false, backIndex, ScreenMenuScript.Positioning.center, 5f, "Camera & FOV Patches", options, events);
+            ScreenMenuScript.Open(false, false, backIndex, ScreenMenuScript.Positioning.center, 5f, "Camera & FOV Patches", options, events);
             Sound.Play("SoundMenuPopUp");
         }
 
@@ -656,7 +656,7 @@ namespace CloverAddictivePatches.Patches
                 new ScreenMenuScript.OptionEvent(BackToModOptions)
             };
 
-            ScreenMenuScript.Open(true, false, 5, ScreenMenuScript.Positioning.center, 5f, "Menu & UI Patches", options, events);
+            ScreenMenuScript.Open(false, false, 5, ScreenMenuScript.Positioning.center, 5f, "Menu & UI Patches", options, events);
             Sound.Play("SoundMenuPopUp");
         }
 
@@ -697,7 +697,7 @@ namespace CloverAddictivePatches.Patches
                 new ScreenMenuScript.OptionEvent(BackToModOptions)
             };
 
-            ScreenMenuScript.Open(true, false, 6, ScreenMenuScript.Positioning.center, 5f, "Game Flow Patches", options, events);
+            ScreenMenuScript.Open(false, false, 6, ScreenMenuScript.Positioning.center, 5f, "Game Flow Patches", options, events);
             Sound.Play("SoundMenuPopUp");
         }
 
@@ -734,7 +734,7 @@ namespace CloverAddictivePatches.Patches
                 new ScreenMenuScript.OptionEvent(BackToModOptions)
             };
 
-            ScreenMenuScript.Open(true, false, 4, ScreenMenuScript.Positioning.center, 5f, "Misc Patches", options, events);
+            ScreenMenuScript.Open(false, false, 4, ScreenMenuScript.Positioning.center, 5f, "Misc Patches", options, events);
             Sound.Play("SoundMenuPopUp");
         }
 
@@ -765,7 +765,7 @@ namespace CloverAddictivePatches.Patches
                 new ScreenMenuScript.OptionEvent(BackToModOptions)
             };
 
-            ScreenMenuScript.Open(true, false, 2, ScreenMenuScript.Positioning.center, 5f, "Debug Options", options, events);
+            ScreenMenuScript.Open(false, false, 2, ScreenMenuScript.Positioning.center, 5f, "Debug Options", options, events);
             Sound.Play("SoundMenuPopUp");
         }
 

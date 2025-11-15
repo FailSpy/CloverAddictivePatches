@@ -10,6 +10,7 @@ UTILITY_FILES=(
     "Utilities/CameraAccessors.cs"
     "Utilities/DeathHandlingUtils.cs"
     "Utilities/MenuHelpers.cs"
+    "Utilities/ItemPrimitives.cs"
 )
 
 # ====================================================================

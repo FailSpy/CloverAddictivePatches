@@ -81,51 +81,50 @@ namespace CloverAddictivePatches
             {
                 var harmony = new Harmony("io.github.failspy.qualityclover");
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.Debug", DebugPatch.Value,
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.Debug",
                     initializeAction: () => InitializePatch("CloverAddictivePatches.Patches.Debug", this));
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.DrawerPeek", true,
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.DrawerPeek",
                     initializeAction: () => InitializePatch("CloverAddictivePatches.Patches.DrawerPeek", this));
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.DisableInterestsCutscene", SkipTrapdoorWarningsPatch.Value);
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.DisableInterestsCutscene");
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.MainMenuCameraFix", MainMenuCameraFixPatch.Value);
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.MainMenuCameraFix");
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.MainMenuAdditions", true,
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.MainMenuAdditions",
                     initializeAction: () => InitializePatch("CloverAddictivePatches.Patches.MainMenuAdditions", this));
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.MemoryCardMenuAccess", MemoryCardMenuAccessPatch.Value);
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.MemoryCardMenuAccess");
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.InventoryDrawerSwap", true,
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.InventoryDrawerSwap",
                     initializeAction: () => InitializePatch("CloverAddictivePatches.Patches.InventoryDrawerSwap", this));
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.CameraUtils", true);
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.CameraUtils");
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.SkipRepeatedDialogue", SkipRepetitiveWarningsPatch.Value);
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.SkipRepeatedDialogue");
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.ControllerFix", ControllerFixPatch.Value);
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.ControllerFix");
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.InstantRestartDeath", InstantRestartPatch.Value);
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.InstantRestartDeath");
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.ExtendedTransitionSpeeds", ExtendedTransitionSpeedsPatch.Value);
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.ExtendedTransitionSpeeds");
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.ReduceSkipDelays", ReduceSkipDelaysPatch.Value);
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.ReduceSkipDelays");
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.FreeroamDuringCutscenes", ATMCutsceneFreeroamPatch.Value);
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.FreeroamDuringCutscenes");
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.DisableVertigoEffects", NoVertigoInducersPatch.Value);
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.DisableVertigoEffects");
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.SmartDeposit", SmartDepositPatch.Value);
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.SmartDeposit");
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.NewRunConfirmation", true,
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.NewRunConfirmation",
                     initializeAction: () => InitializePatch("CloverAddictivePatches.Patches.NewRunConfirmation", this));
 
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.DisableDrawerCorpseReaction", QuietDrawersPatch.Value);
-
-                PatchIfEnabled(harmony, "CloverAddictivePatches.Patches.ReducedMotion", ReducedMotionPatch.Value);
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.DisableDrawerCorpseReaction");
 
 
-                Logger.LogInfo("Harmony patches applied successfully!");
+
+                Logger.LogInfo("Harmony patches registered successfully!");
             }
             catch (System.Exception e)
             {
@@ -157,16 +156,10 @@ namespace CloverAddictivePatches
         }
 
         /// <summary>
-        /// Applies a Harmony patch if the type exists and is enabled.
+        /// Registers a Harmony patch if the type exists. Patches control their own behavior via runtime checks.
         /// </summary>
-        private void PatchIfEnabled(Harmony harmony, string typeName, bool isEnabled, System.Action initializeAction = null)
+        private void TryRegisterPatch(Harmony harmony, string typeName, System.Action initializeAction = null)
         {
-            if (!isEnabled)
-            {
-                Logger.LogInfo($"{typeName.Split('.')[2]} patch disabled by config");
-                return;
-            }
-
             Type patchType = Type.GetType(typeName);
 
             if (patchType == null)
@@ -180,7 +173,7 @@ namespace CloverAddictivePatches
                 initializeAction?.Invoke();
 
                 harmony.PatchAll(patchType);
-                Logger.LogInfo($"{patchType.Name} patch enabled");
+                Logger.LogInfo($"{patchType.Name} patch registered");
             }
             catch (System.Exception e)
             {
