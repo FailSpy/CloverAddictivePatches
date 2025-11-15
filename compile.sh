@@ -24,6 +24,7 @@ PATCH_FILES=(
     # Core/Debug
     "Patches/Debug.cs"
     # "Patches/DebugBlackScreenTest.cs"
+    # "Patches/ItemPrimitivesDebugTests.cs"     # Debug test suite - uncomment to include
     "Patches/SkipIntro.cs"
 
     # Camera & FOV
