@@ -500,6 +500,9 @@ namespace CloverAddictivePatches.Patches
             optionsList.Add("Game Flow Patches");
             eventsList.Add(new ScreenMenuScript.OptionEvent(OpenQOLSpeedPatches));
 
+            optionsList.Add("E999 Fixes");
+            eventsList.Add(new ScreenMenuScript.OptionEvent(OpenE999Options));
+
             optionsList.Add("Misc Patches");
             eventsList.Add(new ScreenMenuScript.OptionEvent(OpenQOLCameraPatches));
 
@@ -735,6 +738,39 @@ namespace CloverAddictivePatches.Patches
             };
 
             ScreenMenuScript.Open(false, false, 4, ScreenMenuScript.Positioning.center, 5f, "Misc Patches", options, events);
+            Sound.Play("SoundMenuPopUp");
+        }
+
+        // Open E999 Fixes submenu
+        private static void OpenE999Options()
+        {
+            ScreenMenuScript.Close(true);
+
+            if (GeneralUiScript.instance != null)
+            {
+                GeneralUiScript.instance.StartCoroutine(OpenE999OptionsCoroutine());
+            }
+        }
+
+        private static IEnumerator OpenE999OptionsCoroutine()
+        {
+            yield return null;
+
+            string[] options = new string[]
+            {
+                $"BigInteger Pattern Tracking: {(Plugin.EnableBigIntegerPatternTracking.Value ? "On" : "Off")}",
+                $"PCG RNG Fix: {(Plugin.EnablePcgRngFix.Value ? "On" : "Off")}",
+                "Back"
+            };
+
+            ScreenMenuScript.OptionEvent[] events = new ScreenMenuScript.OptionEvent[]
+            {
+                new ScreenMenuScript.OptionEvent(() => TogglePatch(() => Plugin.EnableBigIntegerPatternTracking.Value, v => Plugin.EnableBigIntegerPatternTracking.Value = v, OpenE999Options)),
+                new ScreenMenuScript.OptionEvent(() => TogglePatch(() => Plugin.EnablePcgRngFix.Value, v => Plugin.EnablePcgRngFix.Value = v, OpenE999Options)),
+                new ScreenMenuScript.OptionEvent(BackToModOptions)
+            };
+
+            ScreenMenuScript.Open(false, false, 2, ScreenMenuScript.Positioning.center, 5f, "E999 Fixes", options, events);
             Sound.Play("SoundMenuPopUp");
         }
 

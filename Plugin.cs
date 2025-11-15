@@ -40,6 +40,11 @@ namespace CloverAddictivePatches
         public static ConfigEntry<bool> HideCoinsTicketsUI { get; private set; }
         public static ConfigEntry<bool> ReducedMotionPatch { get; private set; }
 
+        // Experimental E999+ Support Systems
+        public static ConfigEntry<bool> EnablePatternOverflowCrashFix { get; private set; }
+        public static ConfigEntry<bool> EnableBigIntegerPatternTracking { get; private set; }
+        public static ConfigEntry<bool> EnablePcgRngFix { get; private set; }
+
         public static ConfigEntry<bool> BadEndingDialogueSeen { get; private set; }
 
         // Drawer collider debug settings
@@ -122,7 +127,19 @@ namespace CloverAddictivePatches
 
                 TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.DisableDrawerCorpseReaction");
 
+                // PatternOverflowCrashFix - conditionally register based on config (crash fix must be all-or-nothing)
+                if (EnablePatternOverflowCrashFix.Value)
+                {
+                    TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.PatternOverflowCrashFix");
+                }
+                else
+                {
+                    Logger.LogInfo("PatternOverflowCrashFix disabled by config - not registering");
+                }
 
+                // Experimental E999+ patches (always register, runtime checks inside)
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.BigIntegerPatternTracking");
+                TryRegisterPatch(harmony, "CloverAddictivePatches.Patches.PcgRngFix");
 
                 Logger.LogInfo("Harmony patches registered successfully!");
             }
@@ -320,6 +337,25 @@ namespace CloverAddictivePatches
                 "HideCoinsTicketsUI",
                 false,
                 "Hide coins and tickets UI in top corners (useful for screenshots)");
+
+            // Experimental Settings Section (E999+ Support & Crash Prevention)
+            EnablePatternOverflowCrashFix = Config.Bind(
+                "Experimental",
+                "EnablePatternOverflowCrashFix",
+                true,
+                "Crash prevention for pattern overflow during extreme runs. Enabled by default. Only disable if you're using alternative solutions.");
+
+            EnableBigIntegerPatternTracking = Config.Bind(
+                "Experimental",
+                "EnableBigIntegerPatternTracking",
+                false,
+                "Enable BigInteger pattern tracking for E999+ support. Uses shadow BigInteger tracking for perfect precision. WARNING: Experimental and may cause performance issues.");
+
+            EnablePcgRngFix = Config.Bind(
+                "Experimental",
+                "EnablePcgRngFix",
+                false,
+                "Replace game's RNG with PCG (better randomness). WARNING: Experimental and may affect game balance.");
 
             // Dialogue State Tracking Section (not exposed in Mod Options menu to avoid spoilers)
             BadEndingDialogueSeen = Config.Bind(

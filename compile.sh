@@ -47,6 +47,11 @@ PATCH_FILES=(
     "Patches/SkipRepetitiveWarnings.cs"            # Skip repetitive warnings and restart anecdotes
     "Patches/SmartDeposit.cs"
     "Patches/NoVertigoInducersPatch.cs"            # No vertigo-inducing effects
+
+    # Experimental (E999+ Support & Crash Prevention)
+    "Patches/PatternOverflowCrashFix.cs"           # Crash prevention for pattern overflow (enabled by default, can disable via config)
+    "Patches/BigIntegerPatternTracking.cs"         # Full E999+ support (Shadow BigInteger tracking - perfect precision)
+    "Patches/PcgRngFix.cs"                         # Replace game's RNG with PCG (better randomness)
 )
 
 # Example: To exclude a patch during development:
